@@ -1,10 +1,585 @@
-(()=>{const C=StudyNookConfig;let config={...C.defaultAvatar,...(AvatarStorage.load()||{})},category="hair",xp=null;const $=s=>document.querySelector(s);function unlocked(i){return xp!==null&&xp>=i.xpRequired}function equipped(i){return i.multi?(config.accessories||[]).includes(i.id):config[i.category]===i.id}
-function renderTabs(){ $("#tabs").innerHTML=C.categories.map(c=>`<button class="tab ${c===category?'active':''}" data-cat="${c}">${c==='hijab'?'Hijab / Headwear':c[0].toUpperCase()+c.slice(1)}</button>`).join("");document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{category=b.dataset.cat;renderTabs();renderItems()})}
-function renderItems(){const list=C.items.filter(i=>i.category===category);$("#items").innerHTML=list.map(i=>{const ok=unlocked(i),eq=equipped(i);return `<button class="item ${ok?'':'locked'} ${eq?'equipped':''}" data-id="${i.id}" ${ok?'':'aria-disabled="true"'}><span class="thumb"><img src="${i.asset}" alt="${i.name}">${ok?'':`<b class="lock">🔒</b>`}</span><strong>${i.name}</strong><small>${eq?'✓ Equipped':ok?'✓ Unlocked':`${i.xpRequired} XP required`}</small>${!ok&&xp!==null?`<em>${Math.max(0,i.xpRequired-xp)} XP to go</em>`:''}</button>`}).join("");document.querySelectorAll(".item").forEach(b=>b.onclick=()=>equip(b.dataset.id))}
-function equip(id){const i=C.items.find(x=>x.id===id);if(!i||!unlocked(i))return;if(i.multi){const a=new Set(config.accessories||[]);a.has(id)?a.delete(id):a.add(id);config.accessories=[...a]}else{config[i.category]=config[i.category]===id&&["bags","glasses","hijab"].includes(i.category)?null:id;if(i.category==="hijab"&&config.hijab){} }AvatarRenderer.renderAvatar(config);renderItems()}
-function renderXP(){const status=$("#status"),label=$("#xpLabel"),next=$("#nextUnlock"),bar=$("#xpBar");if(xp===null){label.textContent="Waiting for XP…";status.textContent="🟡 Waiting for Study Nook XP connection";bar.style.width="0%";return}label.textContent=`⭐ ${xp.toLocaleString()} XP`;status.textContent=XPIntegration.isConnected()?"🟢 Connected to Study Nook":"🔵 Development Mode — Test XP";const future=C.items.filter(i=>i.xpRequired>xp).sort((a,b)=>a.xpRequired-b.xpRequired);if(future[0]){const n=future[0];const prev=Math.max(0,...C.items.filter(i=>i.xpRequired<=xp).map(i=>i.xpRequired));const pct=Math.min(100,Math.max(0,(xp-prev)/(n.xpRequired-prev)*100));bar.style.width=pct+"%";next.textContent=`Next unlock: ${n.name} at ${n.xpRequired.toLocaleString()} XP`}else{bar.style.width="100%";next.textContent="All current rewards unlocked ✨"}$("#rewards").innerHTML=future.slice(0,3).map(i=>`<div><span>🔒 ${i.xpRequired.toLocaleString()} XP</span><b>${i.name}</b></div>`).join("")||"<p>Everything is unlocked! ♡</p>";renderItems()}
-function save(){AvatarStorage.save(config);XPIntegration.send("AVATAR_UPDATED",{avatar:config});$("#saveNote").textContent="Saved! Your avatar configuration is ready for Study Nook ♡";setTimeout(()=>$("#saveNote").textContent="",3000)}
-function reset(){if(!confirm("Reset your avatar to the default look?"))return;config=structuredClone(C.defaultAvatar);AvatarRenderer.renderAvatar(config);renderItems();save()}
-$("#saveBtn").onclick=save;$("#resetBtn").onclick=reset;window.addEventListener("studynook:set-avatar",e=>{config={...C.defaultAvatar,...e.detail};AvatarRenderer.renderAvatar(config);renderItems()});window.addEventListener("studynook:request-avatar",()=>XPIntegration.send("AVATAR_UPDATED",{avatar:config}));
-window.StudyNookAvatar={getAvatarConfig:()=>structuredClone(config),setAvatarConfig(c){config={...C.defaultAvatar,...c};AvatarRenderer.renderAvatar(config);renderItems()},getUnlockedItems:()=>C.items.filter(unlocked).map(i=>i.id),getCurrentXP:()=>xp};
-renderTabs();AvatarRenderer.renderAvatar(config);XPIntegration.onChange((v)=>{xp=v;renderXP()});renderXP();XPIntegration.start();})();
+(() => {
+
+  const C = StudyNookConfig;
+
+  let config = {
+    ...C.defaultAvatar,
+    ...(AvatarStorage.load() || {})
+  };
+
+  let category = "skin";
+  let xp = null;
+
+  const $ = selector =>
+    document.querySelector(selector);
+
+  function unlocked(item) {
+    return xp !== null &&
+      xp >= item.xpRequired;
+  }
+
+  function equipped(item) {
+
+    if (item.multi) {
+      return (config.accessories || [])
+        .includes(item.id);
+    }
+
+    return config[item.category] === item.id;
+  }
+
+  /* ==============================
+     CATEGORY TABS
+  ============================== */
+
+  function renderTabs() {
+
+    $("#tabs").innerHTML =
+      C.categories.map(c => {
+
+        let name =
+          c[0].toUpperCase() +
+          c.slice(1);
+
+        if (c === "hijab") {
+          name = "Hijab / Headwear";
+        }
+
+        if (c === "skin") {
+          name = "Skin";
+        }
+
+        return `
+          <button
+            class="tab ${c === category ? "active" : ""}"
+            data-cat="${c}"
+          >
+            ${name}
+          </button>
+        `;
+
+      }).join("");
+
+    document
+      .querySelectorAll(".tab")
+      .forEach(button => {
+
+        button.onclick = () => {
+
+          category =
+            button.dataset.cat;
+
+          renderTabs();
+          renderItems();
+        };
+
+      });
+  }
+
+  /* ==============================
+     SKIN TONE CARDS
+  ============================== */
+
+  function renderSkinTones() {
+
+    $("#items").innerHTML =
+      C.skinToneOptions
+        .map(tone => {
+
+          const selected =
+            config.skinTone === tone.id;
+
+          return `
+            <button
+              class="
+                item
+                skin-item
+                ${selected ? "equipped" : ""}
+              "
+              data-skin="${tone.id}"
+            >
+
+              <span class="skin-preview">
+
+                <span
+                  class="skin-circle"
+                  style="
+                    background:
+                    ${C.skinTones[tone.id]};
+                  "
+                ></span>
+
+              </span>
+
+              <strong>
+                ${tone.name}
+              </strong>
+
+              <small>
+                ${
+                  selected
+                    ? "✓ Equipped"
+                    : "Tap to use"
+                }
+              </small>
+
+            </button>
+          `;
+
+        }).join("");
+
+    document
+      .querySelectorAll("[data-skin]")
+      .forEach(button => {
+
+        button.onclick = () => {
+
+          config.skinTone =
+            button.dataset.skin;
+
+          AvatarRenderer
+            .renderAvatar(config);
+
+          renderSkinTones();
+        };
+
+      });
+  }
+
+  /* ==============================
+     CLOTHING ITEMS
+  ============================== */
+
+  function renderItems() {
+
+    if (category === "skin") {
+      renderSkinTones();
+      return;
+    }
+
+    const list =
+      C.items.filter(
+        item =>
+          item.category === category
+      );
+
+    $("#items").innerHTML =
+      list.map(item => {
+
+        const ok =
+          unlocked(item);
+
+        const eq =
+          equipped(item);
+
+        return `
+          <button
+            class="
+              item
+              ${ok ? "" : "locked"}
+              ${eq ? "equipped" : ""}
+            "
+            data-id="${item.id}"
+            ${
+              ok
+                ? ""
+                : 'aria-disabled="true"'
+            }
+          >
+
+            <span class="thumb">
+
+              <img
+                src="${item.asset}"
+                alt="${item.name}"
+              >
+
+              ${
+                ok
+                  ? ""
+                  : `
+                    <b class="lock">
+                      🔒
+                    </b>
+                  `
+              }
+
+            </span>
+
+            <strong>
+              ${item.name}
+            </strong>
+
+            <small>
+
+              ${
+                eq
+                  ? "✓ Equipped"
+
+                  : ok
+                    ? "✓ Unlocked"
+
+                    : `${item.xpRequired} XP required`
+              }
+
+            </small>
+
+            ${
+              !ok && xp !== null
+                ? `
+                  <em>
+                    ${Math.max(
+                      0,
+                      item.xpRequired - xp
+                    )} XP to go
+                  </em>
+                `
+                : ""
+            }
+
+          </button>
+        `;
+
+      }).join("");
+
+    document
+      .querySelectorAll(".item[data-id]")
+      .forEach(button => {
+
+        button.onclick = () =>
+          equip(button.dataset.id);
+
+      });
+  }
+
+  /* ==============================
+     EQUIP ITEM
+  ============================== */
+
+  function equip(id) {
+
+    const item =
+      C.items.find(
+        x => x.id === id
+      );
+
+    if (!item ||
+        !unlocked(item)) {
+      return;
+    }
+
+    if (item.multi) {
+
+      const accessories =
+        new Set(
+          config.accessories || []
+        );
+
+      if (accessories.has(id)) {
+        accessories.delete(id);
+      } else {
+        accessories.add(id);
+      }
+
+      config.accessories =
+        [...accessories];
+
+    } else {
+
+      const removable = [
+        "bags",
+        "glasses",
+        "hijab"
+      ];
+
+      if (
+        config[item.category] === id &&
+        removable.includes(
+          item.category
+        )
+      ) {
+
+        config[item.category] = null;
+
+      } else {
+
+        config[item.category] = id;
+
+      }
+    }
+
+    AvatarRenderer
+      .renderAvatar(config);
+
+    renderItems();
+  }
+
+  /* ==============================
+     XP DISPLAY
+  ============================== */
+
+  function renderXP() {
+
+    const status =
+      $("#status");
+
+    const label =
+      $("#xpLabel");
+
+    const next =
+      $("#nextUnlock");
+
+    const bar =
+      $("#xpBar");
+
+    if (xp === null) {
+
+      label.textContent =
+        "Waiting for XP…";
+
+      status.textContent =
+        "🟡 Waiting for Study Nook XP connection";
+
+      bar.style.width = "0%";
+
+      return;
+    }
+
+    label.textContent =
+      `⭐ ${xp.toLocaleString()} XP`;
+
+    status.textContent =
+      XPIntegration.isConnected()
+        ? "🟢 Connected to Study Nook"
+        : "🔵 Development Mode — Test XP";
+
+    const future =
+      C.items
+        .filter(
+          item =>
+            item.xpRequired > xp
+        )
+        .sort(
+          (a, b) =>
+            a.xpRequired -
+            b.xpRequired
+        );
+
+    if (future[0]) {
+
+      const nextItem =
+        future[0];
+
+      const previousXP =
+        Math.max(
+          0,
+          ...C.items
+            .filter(
+              item =>
+                item.xpRequired <= xp
+            )
+            .map(
+              item =>
+                item.xpRequired
+            )
+        );
+
+      const range =
+        nextItem.xpRequired -
+        previousXP;
+
+      const progress =
+        range === 0
+          ? 100
+          : (
+              (xp - previousXP) /
+              range
+            ) * 100;
+
+      bar.style.width =
+        Math.min(
+          100,
+          Math.max(
+            0,
+            progress
+          )
+        ) + "%";
+
+      next.textContent =
+        `Next unlock: ${nextItem.name} at ${nextItem.xpRequired.toLocaleString()} XP`;
+
+    } else {
+
+      bar.style.width =
+        "100%";
+
+      next.textContent =
+        "All current rewards unlocked ✨";
+    }
+
+    $("#rewards").innerHTML =
+      future
+        .slice(0, 3)
+        .map(item => `
+          <div>
+            <span>
+              🔒 ${item.xpRequired.toLocaleString()} XP
+            </span>
+            <b>
+              ${item.name}
+            </b>
+          </div>
+        `)
+        .join("") ||
+        "<p>Everything is unlocked! ♡</p>";
+
+    renderItems();
+  }
+
+  /* ==============================
+     SAVE
+  ============================== */
+
+  function save() {
+
+    AvatarStorage.save(config);
+
+    XPIntegration.send(
+      "AVATAR_UPDATED",
+      {
+        avatar: config
+      }
+    );
+
+    $("#saveNote").textContent =
+      "Saved! Your avatar configuration is ready for Study Nook ♡";
+
+    setTimeout(() => {
+
+      $("#saveNote").textContent = "";
+
+    }, 3000);
+  }
+
+  /* ==============================
+     RESET
+  ============================== */
+
+  function reset() {
+
+    if (
+      !confirm(
+        "Reset your avatar to the default look?"
+      )
+    ) {
+      return;
+    }
+
+    config =
+      structuredClone(
+        C.defaultAvatar
+      );
+
+    AvatarRenderer
+      .renderAvatar(config);
+
+    renderItems();
+
+    save();
+  }
+
+  $("#saveBtn").onclick =
+    save;
+
+  $("#resetBtn").onclick =
+    reset;
+
+  /* ==============================
+     MESSAGE EVENTS
+  ============================== */
+
+  window.addEventListener(
+    "studynook:set-avatar",
+    event => {
+
+      config = {
+        ...C.defaultAvatar,
+        ...event.detail
+      };
+
+      AvatarRenderer
+        .renderAvatar(config);
+
+      renderItems();
+    }
+  );
+
+  window.addEventListener(
+    "studynook:request-avatar",
+    () => {
+
+      XPIntegration.send(
+        "AVATAR_UPDATED",
+        {
+          avatar: config
+        }
+      );
+
+    }
+  );
+
+  /* ==============================
+     PUBLIC API
+  ============================== */
+
+  window.StudyNookAvatar = {
+
+    getAvatarConfig: () =>
+      structuredClone(config),
+
+    setAvatarConfig(newConfig) {
+
+      config = {
+        ...C.defaultAvatar,
+        ...newConfig
+      };
+
+      AvatarRenderer
+        .renderAvatar(config);
+
+      renderItems();
+    },
+
+    getUnlockedItems: () =>
+      C.items
+        .filter(unlocked)
+        .map(
+          item =>
+            item.id
+        ),
+
+    getCurrentXP: () =>
+      xp
+  };
+
+  /* START */
+
+  renderTabs();
+
+  AvatarRenderer
+    .renderAvatar(config);
+
+  XPIntegration.onChange(
+    value => {
+
+      xp = value;
+
+      renderXP();
+    }
+  );
+
+  renderXP();
+
+  XPIntegration.start();
+
+})();
