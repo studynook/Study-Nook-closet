@@ -1,3 +1,62 @@
 @import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Nunito:wght@400;600;700;800&display=swap');
-:root{--paper:#fffaf0;--ink:#58473f;--pink:#e9b9c5;--rose:#c98498;--sage:#b8c9ad;--lav:#cbc2df;--blue:#bed2dc;--cream:#f4ead8;--line:#d8cabb}*{box-sizing:border-box}body{margin:0;background:#efe6d7;background-image:radial-gradient(#d8cabb 1px,transparent 1px);background-size:18px 18px;color:var(--ink);font-family:Nunito,sans-serif}.page{max-width:1280px;margin:auto;padding:28px}.top{display:flex;justify-content:space-between;gap:24px;align-items:end;margin-bottom:22px}.eyebrow{letter-spacing:.18em;font-size:11px;font-weight:800;margin:0;color:#9a776a}h1,h2,h3{font-family:'Patrick Hand',cursive;margin:.15em 0}h1{font-size:46px}h2{font-size:30px}.sub{margin:0}.xpbox{width:min(390px,100%);background:#fff9f3;border:1px solid var(--line);padding:14px 16px;border-radius:18px;box-shadow:0 5px 0 #d8cabb}.xpbox>div:first-child{display:flex;justify-content:space-between;gap:12px}.xpbox small{display:block;font-size:11px}.progress{height:10px;background:#eadfd4;border-radius:99px;margin:10px 0;overflow:hidden}.progress i{display:block;height:100%;background:var(--rose);width:0;transition:.35s}.layout{display:grid;grid-template-columns:minmax(330px,.8fr) minmax(480px,1.3fr);gap:24px}.paper{background:var(--paper);border:1px solid var(--line);border-radius:24px;box-shadow:0 10px 0 rgba(115,88,73,.12);position:relative}.preview{min-height:650px;padding:30px;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden}.tape{position:absolute;width:90px;height:24px;background:rgba(224,184,169,.65);top:12px;transform:rotate(-8deg)}.t1{left:20px}.t2{right:18px;transform:rotate(7deg);background:rgba(184,201,173,.65)}.doodle{position:absolute;right:28px;bottom:110px;font-size:25px;color:#c98498;transform:rotate(-8deg)}.avatar{position:relative;width:min(100%,390px);aspect-ratio:320/420}.layer{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}.base{z-index:1}.bottom{z-index:2}.shoes{z-index:3}.top{z-index:4}.hair{z-index:5}.hijab{z-index:6}.face{z-index:7}.accessory{z-index:8}.glasses{z-index:9}.bag{z-index:10}.actions{display:flex;gap:10px;margin-top:10px}.actions button,.tab,.item{font:inherit;border:1px solid var(--line);background:#fff;border-radius:14px;cursor:pointer}.actions button{padding:12px 18px;font-weight:800}.actions .primary{background:var(--pink)}.note{height:20px;font-size:12px}.closet{padding:26px}.closetHead{display:flex;justify-content:space-between}.sticker{background:var(--sage);padding:8px 13px;border-radius:50%;transform:rotate(8deg);font-family:'Patrick Hand';text-align:center}.tabs{display:flex;gap:8px;overflow:auto;padding:8px 0 15px}.tab{white-space:nowrap;padding:9px 13px}.tab.active{background:var(--lav);font-weight:800;box-shadow:0 3px 0 #b2a8cb}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.item{text-align:left;padding:10px;min-height:180px;position:relative;transition:.18s}.item:hover{transform:translateY(-2px)}.item.equipped{outline:3px solid #b5c9a8}.item.locked{opacity:.62}.thumb{display:block;height:112px;background:#f6eee3;border-radius:10px;position:relative;overflow:hidden}.thumb img{width:100%;height:100%;object-fit:contain}.lock{position:absolute;right:7px;top:7px;background:white;border-radius:50%;padding:5px}.item strong,.item small,.item em{display:block;margin-top:5px}.item small{font-size:11px}.item em{font-size:10px;color:#9a5f72}.rewards{margin-top:22px;border-top:1px dashed var(--line);padding-top:12px}.rewards>div{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.rewards>div>div{background:#f6eee3;padding:10px;border-radius:12px;font-size:11px}.rewards span,.rewards b{display:block}@media(max-width:850px){.top{align-items:stretch;flex-direction:column}.xpbox{width:100%}.layout{grid-template-columns:1fr}.preview{min-height:520px}.grid{grid-template-columns:repeat(3,1fr)}}@media(max-width:520px){.page{padding:14px}h1{font-size:38px}.preview,.closet{padding:18px}.grid{grid-template-columns:repeat(2,1fr)}.rewards>div{grid-template-columns:1fr}.xpbox>div:first-child{flex-direction:column}.avatar{max-width:320px}}
+:root{--paper:#fffaf0;--ink:#58473f;--pink:#e9b9c5;--rose:#c98498;--sage:#b8c9ad;--lav:#cbc2df;--blue:#bed2dc;--cream:#f4ead8;--line:#d8cabb}*{box-sizing:border-box}body{margin:0;background:#efe6d7;background-image:radial-gradient(#d8cabb 1px,transparent 1px);background-size:18px 18px;color:var(--ink);font-family:Nunito,sans-serif}.page{max-width:1280px;margin:auto;padding:28px}.top{display:flex;justify-content:space-between;gap:24px;align-items:end;margin-bottom:22px}.eyebrow{letter-spacing:.18em;font-size:11px;font-weight:800;margin:0;color:#9a776a}h1,h2,h3{font-family:'Patrick Hand',cursive;margin:.15em 0}h1{font-size:46px}h2{font-size:30px}.sub{margin:0}.xpbox{width:min(390px,100%);background:#fff9f3;border:1px solid var(--line);padding:14px 16px;border-radius:18px;box-shadow:0 5px 0 #d8cabb}.xpbox>div:first-child{display:flex;justify-content:space-between;gap:12px}.xpbox small{display:block;font-size:11px}.progress{height:10px;background:#eadfd4;border-radius:99px;margin:10px 0;overflow:hidden}.progress i{display:block;height:100%;background:var(--rose);width:0;transition:.35s}.layout{display:grid;grid-template-columns:minmax(330px,.8fr) minmax(480px,1.3fr);gap:24px}.paper{background:var(--paper);border:1px solid var(--line);border-radius:24px;box-shadow:0 10px 0 rgba(115,88,73,.12);position:relative}.preview{min-height:650px;padding:30px;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden}.tape{position:absolute;width:90px;height:24px;background:rgba(224,184,169,.65);top:12px;transform:rotate(-8deg)}.t1{left:20px}.t2{right:18px;transform:rotate(7deg);background:rgba(184,201,173,.65)}.doodle{position:absolute;right:28px;bottom:110px;font-size:25px;color:#c98498;transform:rotate(-8deg)}.avatar{position:relative;width:min(100%,390px);aspect-ratio:320/420}.layer{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}..hair-back{z-index:1}
+.base{z-index:2}
+.bottom{z-index:3}
+.shoes{z-index:4}
+.top-clothing{
+  z-index:5;
+  transform:translateY(9px);
+}
+.face{z-index:6}
+.hair-front{
+  z-index:7;
+  clip-path:inset(0 0 63% 0);
+}
+.hijab{z-index:8}
+.accessory{z-index:9}
+.glasses{z-index:10}
+.bag{z-index:11}.actions{display:flex;gap:10px;margin-top:10px}.actions button,.tab,.item{font:inherit;border:1px solid var(--line);background:#fff;border-radius:14px;cursor:pointer}.actions button{padding:12px 18px;font-weight:800}.actions .primary{background:var(--pink)}.note{height:20px;font-size:12px}.closet{padding:26px}.closetHead{display:flex;justify-content:space-between}.sticker{background:var(--sage);padding:8px 13px;border-radius:50%;transform:rotate(8deg);font-family:'Patrick Hand';text-align:center}.tabs{display:flex;gap:8px;overflow:auto;padding:8px 0 15px}.tab{white-space:nowrap;padding:9px 13px}.tab.active{background:var(--lav);font-weight:800;box-shadow:0 3px 0 #b2a8cb}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.item{text-align:left;padding:10px;min-height:180px;position:relative;transition:.18s}.item:hover{transform:translateY(-2px)}.item.equipped{outline:3px solid #b5c9a8}.item.locked{opacity:.62}.thumb{display:block;height:112px;background:#f6eee3;border-radius:10px;position:relative;overflow:hidden}.thumb img{width:100%;height:100%;object-fit:contain}.lock{position:absolute;right:7px;top:7px;background:white;border-radius:50%;padding:5px}.item strong,.item small,.item em{display:block;margin-top:5px}.item small{font-size:11px}.item em{font-size:10px;color:#9a5f72}.rewards{margin-top:22px;border-top:1px dashed var(--line);padding-top:12px}.rewards>div{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.rewards>div>div{background:#f6eee3;padding:10px;border-radius:12px;font-size:11px}.rewards span,.rewards b{display:block}@media(max-width:850px){.top{align-items:stretch;flex-direction:column}.xpbox{width:100%}.layout{grid-template-columns:1fr}.preview{min-height:520px}.grid{grid-template-columns:repeat(3,1fr)}}@media(max-width:520px){.page{padding:14px}h1{font-size:38px}.preview,.closet{padding:18px}.grid{grid-template-columns:repeat(2,1fr)}.rewards>div{grid-template-columns:1fr}.xpbox>div:first-child{flex-direction:column}.avatar{max-width:320px}}
 button:focus-visible{outline:3px solid #7f6aa5;outline-offset:2px}
+/* =========================================
+   SKIN TONE SELECTOR
+========================================= */
+
+.skin-item{
+  min-height:160px;
+  text-align:center;
+}
+
+.skin-preview{
+  height:100px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#f6eee3;
+  border-radius:12px;
+  margin-bottom:8px;
+}
+
+.skin-circle{
+  display:block;
+  width:70px;
+  height:70px;
+  border-radius:50%;
+
+  border:
+    4px solid
+    rgba(89,72,63,.65);
+
+  box-shadow:
+    inset 0 -8px 0
+    rgba(0,0,0,.04);
+}
+
+.skin-item.equipped
+.skin-circle{
+  outline:
+    4px solid
+    #b5c9a8;
+
+  outline-offset:
+    4px;
+}
