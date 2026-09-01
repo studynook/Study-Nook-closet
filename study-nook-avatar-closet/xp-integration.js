@@ -1,0 +1,6 @@
+(()=>{const C=StudyNookConfig;let xp=null,connected=false;const listeners=[];function emit(){listeners.forEach(fn=>fn(xp,connected))}function validOrigin(origin){if(C.DEV_MODE&&origin===location.origin)return true;return origin===C.EXPECTED_PARENT_ORIGIN||origin.startsWith(C.EXPECTED_PARENT_ORIGIN+"/")}
+function updateStudentXP(value,isConnected=true){if(!Number.isFinite(Number(value))||Number(value)<0)return;xp=Math.floor(Number(value));connected=isConnected;emit()}
+window.addEventListener("message",e=>{if(!validOrigin(e.origin)||!e.data||typeof e.data!=="object")return;if(e.data.type==="STUDY_NOOK_XP_UPDATE"||e.data.type==="SET_XP")updateStudentXP(e.data.xp,true);if(e.data.type==="SET_AVATAR"&&e.data.avatar)window.dispatchEvent(new CustomEvent("studynook:set-avatar",{detail:e.data.avatar}));if(e.data.type==="REQUEST_AVATAR")window.dispatchEvent(new Event("studynook:request-avatar"))});
+function send(type,payload={}){if(window.parent===window)return;window.parent.postMessage({type,...payload},C.EXPECTED_PARENT_ORIGIN)}
+function start(){send("REQUEST_XP");send("REQUEST_AVATAR");if(C.DEV_MODE)setTimeout(()=>{if(xp===null)updateStudentXP(C.DEV_XP,false)},500)}
+window.XPIntegration={start,updateStudentXP,getXP:()=>xp,isConnected:()=>connected,onChange(fn){listeners.push(fn)},send};})();

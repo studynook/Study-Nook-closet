@@ -1,0 +1,1 @@
+window.AvatarStorage={load(){try{return JSON.parse(localStorage.getItem(StudyNookConfig.STORAGE_KEY))}catch{return null}},save(c){localStorage.setItem(StudyNookConfig.STORAGE_KEY,JSON.stringify(c))},clear(){localStorage.removeItem(StudyNookConfig.STORAGE_KEY)}};
